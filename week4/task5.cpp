@@ -12,7 +12,7 @@ struct Weapon{
 };
 
 struct Hero{
-    char name[10];
+    char name[10]; // ;)
     size_t hp; // 0-100
     Class role;
     Weapon weapon;
