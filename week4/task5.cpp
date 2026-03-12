@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #define MAX_ACHIEVEMENTS 10
 
 enum Role{
@@ -21,7 +22,7 @@ struct Hero{
 void saveGameState(const Hero& hero, const bool* achievements, const size_t n, const size_t nameLen);
 void loadGameState(Hero* hero, bool* achievements, size_t& n, size_t& nameLen);
 bool checkAchievement(const int index);
-void printInfo(const Hero hero, const bool* achievements, const size_t n);
+void printInfo(const Hero& hero, const bool* achievements, const size_t n);
 size_t strlen_t(const char* str);
 
 int main(){
@@ -43,7 +44,6 @@ int main(){
     std::cout << "Enter Name:\n";
     // std::cin >> name;
     strcpy(name, "asd");
-    std::cout << "asd2 ";
     nameLen = strlen_t(name);
 
     Hero netanyahu = {name, 67, role, ak47};
@@ -58,7 +58,7 @@ int main(){
 
     if(n > 0) achievements[n - 1] = true;
     saveGameState(netanyahu, achievements, n, nameLen);
-    printInfo(netanyahu, achievements, n);
+    // printInfo(netanyahu, achievements, n);
 
     std::cout << "ACH: " << checkAchievement(n - 1) << std::endl;
 
@@ -70,6 +70,8 @@ int main(){
 
     delete[] name;
     delete[] achievements;
+    std::cout << "asd1\n";
+    
     if(valio){
         delete[] valio->name;
         delete valio;
@@ -92,8 +94,8 @@ void saveGameState(const Hero& hero, const bool* achievements, const size_t n, c
     // ------
 
     oFile.write((const char*) hero.name, nameLen);
-    oFile.write((const char*) hero.hp, sizeof(hero.hp));
-    oFile.write((const char*) hero.role, sizeof(hero.role));
+    oFile.write((const char*) &hero.hp, sizeof(hero.hp));
+    oFile.write((const char*) &hero.role, sizeof(hero.role));
     oFile.write((const char*) &hero.weapon, sizeof(hero.weapon));
 
     oFile.write((const char*) achievements, n * sizeof(bool));
@@ -108,16 +110,16 @@ void loadGameState(Hero* hero, bool* achievements, size_t& n, size_t& nameLen){
         return;
     }   
 
-    iFile.read((char*) n, sizeof(n)); // achievements
-    iFile.read((char*) nameLen, sizeof(nameLen)); // strlen(name);
+    iFile.read((char*) &n, sizeof(n)); // achievements
+    iFile.read((char*) &nameLen, sizeof(nameLen)); // strlen(name);
 
-    if(!n || !nameLen || n < 0 || nameLen < 0) return;
+    if(n < 0 || nameLen < 0) return;
 
     hero = new (std::nothrow) Hero;
     hero->name = new (std::nothrow) char[nameLen + 1];
     achievements = new (std::nothrow) bool[n];
 
-    if(!hero || !hero->name || !achievements) {
+    if(!hero->name || !achievements) {
         delete[] hero->name;
         delete[] achievements;
         delete hero;
@@ -125,15 +127,17 @@ void loadGameState(Hero* hero, bool* achievements, size_t& n, size_t& nameLen){
     }
 
     iFile.read((char*) hero->name, nameLen);
-    iFile.read((char*) hero->hp, sizeof(hero->hp));
-    iFile.read((char*) hero->role, sizeof(hero->role));
+    hero->name[nameLen] = '\0';
+    iFile.read((char*) &hero->hp, sizeof(hero->hp));
+    iFile.read((char*) &hero->role, sizeof(hero->role));
     iFile.read((char*) &hero->weapon, sizeof(hero->weapon));
     iFile.read((char*) achievements, n * sizeof(bool));
 
     iFile.close();
 }
 
-void printInfo(const Hero hero, const bool* achievements, const size_t n){
+void printInfo(const Hero& hero, const bool* achievements, const size_t n){
+    std::cout << "||||||" << hero.name << "\n\n\n\n\n";
     std::cout << "Hero: " << hero.name << "\nHP [" << hero.hp << "]" << std::endl;
     std::cout << "Role: " << hero.role;
 
