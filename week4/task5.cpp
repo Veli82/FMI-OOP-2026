@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
-#define MAX_ACHIEVEMENTS 10
 
 enum Role{
     Mage, Warrior, Healer
@@ -20,7 +19,7 @@ struct Hero{
 };
 
 void saveGameState(const Hero& hero, const bool* achievements, const size_t n, const size_t nameLen);
-void loadGameState(Hero* hero, bool* achievements, size_t& n, size_t& nameLen);
+void loadGameState(Hero*& hero, bool*& achievements, size_t& n, size_t& nameLen);
 bool checkAchievement(const int index);
 void printInfo(const Hero& hero, const bool* achievements, const size_t n);
 size_t strlen_t(const char* str);
@@ -28,9 +27,8 @@ size_t strlen_t(const char* str);
 int main(){
     size_t n = 0, nameLen = 0;
 
-    std::cout << "Enter N (Achievements):\n";
-    // std::cin >> n;
-    n = 5;
+    std::cout << "Enter N (Achievements): ";
+    std::cin >> n;
 
     Weapon ak47 = {6, 6.7};
     Role role = Mage;
@@ -41,9 +39,8 @@ int main(){
         return 1;
     }
 
-    std::cout << "Enter Name:\n";
-    // std::cin >> name;
-    strcpy(name, "asd");
+    std::cout << "Enter Name: ";
+    std::cin >> name;
     nameLen = strlen_t(name);
 
     Hero netanyahu = {name, 67, role, ak47};
@@ -58,7 +55,7 @@ int main(){
 
     if(n > 0) achievements[n - 1] = true;
     saveGameState(netanyahu, achievements, n, nameLen);
-    // printInfo(netanyahu, achievements, n);
+    printInfo(netanyahu, achievements, n);
 
     std::cout << "ACH: " << checkAchievement(n - 1) << std::endl;
 
@@ -70,7 +67,6 @@ int main(){
 
     delete[] name;
     delete[] achievements;
-    std::cout << "asd1\n";
     
     if(valio){
         delete[] valio->name;
@@ -103,7 +99,7 @@ void saveGameState(const Hero& hero, const bool* achievements, const size_t n, c
     oFile.close();
 }
 
-void loadGameState(Hero* hero, bool* achievements, size_t& n, size_t& nameLen){
+void loadGameState(Hero*& hero, bool*& achievements, size_t& n, size_t& nameLen){
     std::ifstream iFile("save.dat", std::ios::in | std::ios::binary);
     if(!iFile.good()){
         std::cout << "No file.." << std::endl;
@@ -137,7 +133,6 @@ void loadGameState(Hero* hero, bool* achievements, size_t& n, size_t& nameLen){
 }
 
 void printInfo(const Hero& hero, const bool* achievements, const size_t n){
-    std::cout << "||||||" << hero.name << "\n\n\n\n\n";
     std::cout << "Hero: " << hero.name << "\nHP [" << hero.hp << "]" << std::endl;
     std::cout << "Role: " << hero.role;
 
