@@ -18,8 +18,8 @@ struct Hero{
     Weapon weapon;
 };
 
-void saveGameState(const Hero hero, const bool* achievements, const size_t n, const size_t nameLen);
-void loadGameState(Hero* hero, bool* achievements, size_t* n, size_t* nameLen);
+void saveGameState(const Hero& hero, const bool* achievements, const size_t n, const size_t nameLen);
+void loadGameState(Hero* hero, bool* achievements, size_t& n, size_t& nameLen);
 bool checkAchievement(const int index);
 void printInfo(const Hero hero, const bool* achievements, const size_t n);
 size_t strlen_t(const char* str);
@@ -28,7 +28,8 @@ int main(){
     size_t n = 0, nameLen = 0;
 
     std::cout << "Enter N (Achievements):\n";
-    std::cin >> n;
+    // std::cin >> n;
+    n = 5;
 
     Weapon ak47 = {6, 6.7};
     Role role = Mage;
@@ -40,8 +41,9 @@ int main(){
     }
 
     std::cout << "Enter Name:\n";
-    std::cin >> name;
-    std::cout << "asd" << name;
+    // std::cin >> name;
+    strcpy(name, "asd");
+    std::cout << "asd2 ";
     nameLen = strlen_t(name);
 
     Hero netanyahu = {name, 67, role, ak47};
@@ -50,6 +52,7 @@ int main(){
     achievements = new (std::nothrow) bool[n];
     if(!achievements){
         std::cout << "No malloc!\n";
+        delete[] name;
         return 1;
     }
 
@@ -62,7 +65,7 @@ int main(){
     Hero* valio;
     bool* valioAch;
 
-    loadGameState(valio, valioAch, &n, &nameLen);
+    loadGameState(valio, valioAch, n, nameLen);
     printInfo(*valio, valioAch, n);
 
     delete[] name;
@@ -76,7 +79,7 @@ int main(){
     return 0;
 }
 
-void saveGameState(const Hero hero, const bool* achievements, const size_t n, const size_t nameLen){
+void saveGameState(const Hero& hero, const bool* achievements, const size_t n, const size_t nameLen){
     std::ofstream oFile("save.dat", std::ios::out | std::ios::binary);
     if(!oFile.good()){
         std::cout << "No file.." << std::endl;
@@ -98,7 +101,7 @@ void saveGameState(const Hero hero, const bool* achievements, const size_t n, co
     oFile.close();
 }
 
-void loadGameState(Hero* hero, bool* achievements, size_t* n, size_t* nameLen){
+void loadGameState(Hero* hero, bool* achievements, size_t& n, size_t& nameLen){
     std::ifstream iFile("save.dat", std::ios::in | std::ios::binary);
     if(!iFile.good()){
         std::cout << "No file.." << std::endl;
@@ -108,22 +111,24 @@ void loadGameState(Hero* hero, bool* achievements, size_t* n, size_t* nameLen){
     iFile.read((char*) n, sizeof(n)); // achievements
     iFile.read((char*) nameLen, sizeof(nameLen)); // strlen(name);
 
-    if(!n || !nameLen || *n < 0 || *nameLen < 0) return;
+    if(!n || !nameLen || n < 0 || nameLen < 0) return;
 
     hero = new (std::nothrow) Hero;
-    if(!hero) return;
+    hero->name = new (std::nothrow) char[nameLen + 1];
+    achievements = new (std::nothrow) bool[n];
 
-    hero->name = new (std::nothrow) char[*nameLen + 1];
-    if(!hero->name) return;
+    if(!hero || !hero->name || !achievements) {
+        delete[] hero->name;
+        delete[] achievements;
+        delete hero;
+        return;
+    }
 
-    achievements = new (std::nothrow) bool[*n];
-    if(!achievements) return;
-
-    iFile.read((char*) hero->name, *nameLen);
+    iFile.read((char*) hero->name, nameLen);
     iFile.read((char*) hero->hp, sizeof(hero->hp));
     iFile.read((char*) hero->role, sizeof(hero->role));
     iFile.read((char*) &hero->weapon, sizeof(hero->weapon));
-    iFile.read((char*) achievements, *n * sizeof(bool));
+    iFile.read((char*) achievements, n * sizeof(bool));
 
     iFile.close();
 }
@@ -157,6 +162,6 @@ bool checkAchievement(const int index){
 
 size_t strlen_t(const char* str){
     size_t size = 0;
-    for(;str[size] != '\0' || str[size] != '\n'; size++);
+    for(;str[size] != '\0' && str[size] != '\n'; size++);
     return size;
 }
