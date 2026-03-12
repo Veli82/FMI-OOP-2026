@@ -18,7 +18,7 @@ int getSum(int i, int j){
     file.seekg(0, std::ios::end);
     size_t size = file.tellg() / sizeof(int);
 
-    if(i > size || j > size){
+    if(i >= size || j >= size){
         std::cout << "Out of bounds!\n";
         return -1;
     }
