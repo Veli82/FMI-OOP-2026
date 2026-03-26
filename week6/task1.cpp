@@ -9,7 +9,7 @@ class Student{
             mGrade = 6.7;
         }
         bool canGetScolarship(const f32 minGrade){
-            return mGrade >= minGrade ? true : false;
+            return mGrade >= minGrade;
         }
         u8 getYearInUni(const u32 currYear){
             return currYear - 19 - mYear;
@@ -29,8 +29,8 @@ class Student{
         void setYear(const u32 year) {mYear = year;} 
         void setGrade(const f32 grade) {mGrade = grade;}
         const u8* getName() const {return mName;}
-        const u32 getYear() const {return mYear;} 
-        const f32 getGrade() const {return mGrade;}
+        u32 getYear() const {return mYear;} 
+        f32 getGrade() const {return mGrade;}
     private:
         u32 mYear;  //birthYear
         f32 mGrade;

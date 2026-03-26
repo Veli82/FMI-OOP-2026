@@ -34,26 +34,26 @@ class Date{
             mYear++;
         }
         bool isSummerVacation(){
-            return mMonth > 6 && mMonth < 10 ? true : false;
+            return mMonth > 6 && mMonth < 10;
         }
         
-        void setDay(const i16 day) {
+        void setDay(const u16 day) {
             if(day > 12) return;
             mDay = day;
         }
-        void setMonth(const i16 month) {
+        void setMonth(const u16 month) {
             if(month > 12) return;
             mMonth = month;
         } 
         void setYear(const u32 year) {mYear = year;}
 
-        const i16 getDay()   const {return mDay;}
-        const i16 getMonth() const {return mMonth;} 
-        const u32 getYear() const {return mYear;}
+        u16 getDay()   const {return mDay;}
+        u16 getMonth() const {return mMonth;} 
+        u32 getYear() const {return mYear;}
     private:
         u32 mYear;  //birthYear
-        i16  mDay;
-        i16  mMonth;
+        u16  mDay;
+        u16  mMonth;
 };
 
 class Time{
@@ -68,7 +68,7 @@ class Time{
             std::cout << mHour << ":" << mMinute << ":" << mSec << std::endl;
         }
         bool isNight(){
-            return mHour > 0 && mHour < 6 ? true : false; // mejdu 0 i 6 che lowk do 12 si e obqd
+            return mHour > 0 && mHour < 6; // mejdu 0 i 6 che lowk do 12 si e obqd
         }
 
         void passSecond(){
@@ -90,26 +90,26 @@ class Time{
             else mHour++;
         }
 
-        void setSecond(const i16 sec) {
+        void setSecond(const u16 sec) {
             if(sec > 59) throw std::invalid_argument("Seconds can't be more than 59");
             mSec = sec;
         }
-        void setMinute(const i16 minute) {
+        void setMinute(const u16 minute) {
             if(minute > 59) throw std::invalid_argument("Minutes can't be more than 59");
             mMinute = minute;
         } 
-        void setHour(const i16 hour) {
+        void setHour(const u16 hour) {
             if(hour > 23) throw std::invalid_argument("Hours can't be more than 24");;
             mHour = hour;
         }
 
-        const i16 getSecond() const {return mSec;}
-        const i16 getMinute() const {return mMinute;} 
-        const i16 getHour()  const {return mHour;}
+        u16 getSecond() const {return mSec;}
+        u16 getMinute() const {return mMinute;} 
+        u16 getHour()  const {return mHour;}
     private:
-        i16  mHour;
-        i16  mSec;
-        i16  mMinute;
+        u16  mHour;
+        u16  mSec;
+        u16  mMinute;
 };
 
 int main(){

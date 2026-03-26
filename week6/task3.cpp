@@ -18,7 +18,7 @@ class Game{
             std::cout << "Available: " << mIsAvailable << std::endl;
         }
         bool isFree(){
-            return mPrice == 0.0 ? true : false;
+            return mPrice == 0.0;
         }
     
         void setTitle(const u8 *title) {
@@ -30,8 +30,8 @@ class Game{
         void setIsAvailable(bool isAvailable) {mIsAvailable = isAvailable;}
 
         const u8* getTitle() const {return mTitle;}
-        const f32 getPrice() const {return mPrice;} 
-        const bool getIsAvailable() const {return mIsAvailable;}
+        f32 getPrice() const {return mPrice;} 
+        bool getIsAvailable() const {return mIsAvailable;}
     private:
         f32 mPrice;
         u8 mTitle[64];
@@ -71,7 +71,7 @@ class GamePlatform{ // as vector
         const Game* getAllGames() const {
             return mGames;
         }
-        const Game getCheapestGame() const {
+        Game getCheapestGame() const {
             if(!mGames) throw std::out_of_range("No games");
             u32 cheapestIndex = 0;
             for(i32 i = 0; i < mCurrent; i++){
@@ -80,7 +80,7 @@ class GamePlatform{ // as vector
             }
             return mGames[cheapestIndex];
         }
-        const Game getExpensivestGame() const {
+        Game getExpensivestGame() const {
             if(!mGames) throw std::out_of_range("No games");
             u32 expensiveIndex = 0;
             for(i32 i = 0; i < mCurrent; i++){
@@ -91,7 +91,7 @@ class GamePlatform{ // as vector
         }
         void printAllFreeGames(){
             for(i32 i = 0; i < mCurrent; i++){
-                if(mGames[i].getPrice() == 0.0) mGames[i].print();
+                if(mGames[i].isFree()) mGames[i].print();
             }
         }
         void removeGame(const Game game) {
@@ -113,15 +113,11 @@ class GamePlatform{ // as vector
             if(!file) throw std::runtime_error("Failed to open file");
 
             file.write((const char*)&mCurrent, sizeof(mCurrent));
+            
             for(i32 i = 0; i < mCurrent; i++){
-                const Game& game = mGames[i];
-                const u8* title = game.getTitle();
-                const f32 price = game.getPrice();
-                const bool isAvailable = game.getIsAvailable();
-
-                file.write((const char*)title, 64);
-                file.write((const char*)&price, sizeof(price));
-                file.write((const char*)&isAvailable, sizeof(isAvailable));
+                file.write((const char*)mGames[i].getTitle(), 64);
+                file.write((const char*)&mGames[i].getPrice, sizeof(price));
+                file.write((const char*)&mGames[i].getIsAvailable(), sizeof(isAvailable));
             }
         }
 
@@ -138,11 +134,11 @@ class GamePlatform{ // as vector
 
             resetStorage(count == 0 ? 1 : count);
 
-            for(i32 i = 0; i < count; i++){
-                u8 title[64] = {0};
-                f32 price = 0;
-                bool isAvailable = false;
+            u8 title[64] = {0};
+            f32 price = 0;
+            bool isAvailable = false;
 
+            for(i32 i = 0; i < count; i++){
                 file.read((char*)title, 64);
                 file.read((char*)&price, sizeof(price));
                 file.read((char*)&isAvailable, sizeof(isAvailable));
