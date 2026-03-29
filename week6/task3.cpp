@@ -113,11 +113,15 @@ class GamePlatform{ // as vector
             if(!file) throw std::runtime_error("Failed to open file");
 
             file.write((const char*)&mCurrent, sizeof(mCurrent));
-            
+           
+
             for(i32 i = 0; i < mCurrent; i++){
+                f32 price = mGames[i].getPrice();
+                bool isAvailable = mGames[i].getIsAvailable(); 
+
                 file.write((const char*)mGames[i].getTitle(), 64);
-                file.write((const char*)&mGames[i].getPrice, sizeof(price));
-                file.write((const char*)&mGames[i].getIsAvailable(), sizeof(isAvailable));
+                file.write((const char*)&price, sizeof(price));
+                file.write((const char*)&isAvailable, sizeof(isAvailable));
             }
         }
 
