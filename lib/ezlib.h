@@ -60,6 +60,7 @@ char* goodMalloc(const char *str){
         return newStr;
     } catch(std::exception e){
         std::cout << e.what();
+        return nullptr;
     }
 }
 
