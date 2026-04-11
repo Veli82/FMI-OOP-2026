@@ -3,20 +3,20 @@
 
 class Student{
     public:
-        Student(){
+        Student() : mYear(0), mGrade(0.0f), mName(nullptr) {
             setName("Ben 10");
-            mYear = 2005;
-            mGrade = 6.7;
+            setYear(2005);
+            setGrade(5.7f);
         }
-        Student(const char* name, unsigned int year, float grade){
+        Student(const char* name, unsigned int year, float grade) : mYear(0), mGrade(0.0f), mName(nullptr) {
             setName(name);
-            mYear = year;
-            mGrade = grade;
+            setYear(year);
+            setGrade(grade);
         }
-        Student (const Student& other){
+        Student (const Student& other) : mYear(0), mGrade(0.0f), mName(nullptr) {
             setName(other.mName);
-            mYear = other.mYear;
-            mGrade = other.mGrade;
+            setYear(other.mYear);
+            setGrade(other.mGrade);
         }
         Student& operator=(const Student& other){
             if(this == &other) return *this;
@@ -46,14 +46,26 @@ class Student{
         }
         void setName(const char *name) {
             if(!name) throw std::invalid_argument("Name can't be empty");
-            
-            delete [] mName;
-            mName = new char[strlen_t(name)];
+            const size_t len = strlen_t(name);
 
-            strcpy_t(mName, name);
+            char* newName = new (std::nothrow) char[len + 1];
+            if(!newName) throw std::bad_alloc();
+
+            strcpy_t(newName, name);
+
+            delete [] mName;
+            mName = newName;
         }
-        void setYear(unsigned int year) {mYear = year;} 
-        void setGrade(float grade) {mGrade = grade;}
+        void setYear(unsigned int year) {
+            if(year < 1900 || year > 2100)
+                throw std::invalid_argument("Year should be in [1900, 2100]");
+            mYear = year;
+        }
+        void setGrade(float grade) {
+            if(grade < 2.0f || grade > 6.0f)
+                throw std::invalid_argument("Grade should be in [2.0, 6.0]");
+            mGrade = grade;
+        }
         const char* getName() const {return mName;}
         unsigned int getYear() const {return mYear;} 
         float getGrade() const {return mGrade;}

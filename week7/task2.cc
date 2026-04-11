@@ -3,20 +3,20 @@
 
 class Beverage{
     public:
-        Beverage(){
-            setName("Ben 10");
-            mIsAlcoholic = true;
-            mPrice = 6.7;
+        Beverage() : mIsAlcoholic(false), mPrice(0.0f), mName(nullptr) {
+            setName("Water");
+            setIsAlcoholic(false);
+            setPrice(1.5f);
         }
-        Beverage(const char* name, bool isAlcoholic, float Price){
+        Beverage(const char* name, bool isAlcoholic, float Price) : mIsAlcoholic(false), mPrice(0.0f), mName(nullptr) {
             setName(name);
-            mIsAlcoholic = isAlcoholic;
-            mPrice = Price;
+            setIsAlcoholic(isAlcoholic);
+            setPrice(Price);
         }
-        Beverage (const Beverage& other){
+        Beverage (const Beverage& other) : mIsAlcoholic(false), mPrice(0.0f), mName(nullptr) {
             setName(other.mName);
-            mIsAlcoholic = other.mIsAlcoholic;
-            mPrice = other.mPrice;
+            setIsAlcoholic(other.mIsAlcoholic);
+            setPrice(other.mPrice);
         }
         Beverage& operator=(const Beverage& other){
             if(this == &other) return *this;
@@ -27,9 +27,8 @@ class Beverage{
 
             return *this;
         }
-        ~Beverage(){
-            delete [] mName;
-        }
+        ~Beverage(){delete [] mName;}
+
         void printBeverage(){
             std::cout << "-- Beverage -- " << std::endl;
             std::cout << "Name: " << mName << std::endl;
@@ -38,14 +37,22 @@ class Beverage{
         }
         void setName(const char *name) {
             if(!name) throw std::invalid_argument("Name can't be empty");
-            
-            delete [] mName;
-            mName = new char[strlen_t(name)];
+            const size_t len = strlen_t(name);
 
-            strcpy_t(mName, name);
+            char* newName = new (std::nothrow) char[len + 1];
+            if(!newName) throw std::bad_alloc();
+
+            strcpy_t(newName, name);
+
+            delete [] mName;
+            mName = newName;
         }
         void setIsAlcoholic(bool isAlcoholic) {mIsAlcoholic = isAlcoholic;} 
-        void setPrice(float Price) {mPrice = Price;}
+        void setPrice(float Price) {
+            if(Price < 0.0f)
+                throw std::invalid_argument("Price should be >= 0");
+            mPrice = Price;
+        }
         const char* getName() const {return mName;}
         bool getIsAlcoholic() const {return mIsAlcoholic;} 
         float getPrice() const {return mPrice;}
