@@ -3,11 +3,16 @@
 #include <iostream>
 
 Car::Car(const Car& other) :
-Vehicle(other.brand, other.year, other.maxSpeed),
-model(setModel(other.model)), hp(other.hp) {}
+Vehicle(other.brand, other.year, other.maxSpeed), hp(other.hp)
+{
+    setModel(other.model);
+}
 
 Car::Car(const char* brand, unsigned year, unsigned maxSpeed, const char* model, unsigned hp) :
-Vehicle(brand, year, maxSpeed), model(setModel(model)), hp(hp) {}
+Vehicle(brand, year, maxSpeed),  hp(hp)
+{
+    setModel(model);
+}
 
 Car::~Car() { clear(); }
 
@@ -16,13 +21,10 @@ Car& Car::operator=(const Car& other)
     if (this == &other) return *this;
 
     Car temp(other);
-    clear();
 
     std::swap(model,temp.model);
     std::swap(hp,temp.hp);
-    std::swap(brand,temp.brand);
-    std::swap(year,temp.year);
-    std::swap(maxSpeed,temp.maxSpeed);
+    swapData(temp);
 
     return *this;
 }
@@ -32,14 +34,16 @@ bool Car::canGoOnTheHighway() const
     return maxSpeed >= 50 ? "Yes" : "No";
 }
 
-char* Car::setModel(const char* model)
+void Car::setModel(const char* model)
 {
     if (!model) throw std::invalid_argument("nullptr");
     unsigned len = strlen(model);
     char* temp = new char[len + 1];
     strcpy(temp,model);
 
-    return temp;
+    clear();
+
+    this->model = temp;
 }
 
 void Car::clear()

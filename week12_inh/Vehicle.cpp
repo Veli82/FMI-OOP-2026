@@ -4,22 +4,21 @@
 
 Vehicle:: ~Vehicle() { clear(); }
 
-Vehicle::Vehicle(const Vehicle& other) : brand(setBrand(other.brand)), year(other.year), maxSpeed(other.maxSpeed) {}
+Vehicle::Vehicle(const Vehicle& other) :  year(other.year), maxSpeed(other.maxSpeed)
+{
+    setBrand(other.brand);
+}
 
 Vehicle& Vehicle::operator=(const Vehicle& other)
 {
     if (this == &other) return *this;
 
-    Vehicle temp(other);
-
-    std::swap(brand,temp.brand);
-    std::swap(maxSpeed, temp.maxSpeed);
-    std::swap(year,temp.year);
+    swapData(other);
 
     return *this;
 }
 
-char* Vehicle::setBrand(const char* b)
+void Vehicle::setBrand(const char* b)
 {
     if (!b)
         throw std::invalid_argument("nullptr");
@@ -28,7 +27,8 @@ char* Vehicle::setBrand(const char* b)
     char* temp = new char[len + 1];
     strcpy(temp, b);
 
-    return temp;
+    clear();
+    brand = temp;
 }
 
 void Vehicle::setYear(unsigned y) { year = y; }
@@ -39,4 +39,13 @@ void Vehicle::clear()
 {
     delete[] brand;
     brand = nullptr;
+}
+
+void Vehicle::swapData(const Vehicle& other)
+{
+    Vehicle temp(other);
+
+    std::swap(brand, temp.brand);
+    std::swap(year,temp.year);
+    std::swap(maxSpeed,temp.maxSpeed);
 }

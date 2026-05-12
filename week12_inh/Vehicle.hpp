@@ -3,15 +3,17 @@
 class Vehicle {
 public:
     //big 4
-    Vehicle() = delete;
+    Vehicle();
     virtual ~Vehicle();
     Vehicle(const Vehicle& other);
     Vehicle& operator=(const Vehicle& other);
-    Vehicle(const char* brand, unsigned year, unsigned maxSpeed) :
-    brand(setBrand(brand)), year(year), maxSpeed(maxSpeed) {}
+    Vehicle(const char* brand, unsigned year, unsigned maxSpeed) :  year(year), maxSpeed(maxSpeed)
+    {
+        setBrand(brand);
+    }
 
     //setters
-    char* setBrand(const char* b);
+    void setBrand(const char* b);
     void setYear(unsigned y);
     void setMaxSpeed(unsigned speed);
 
@@ -25,6 +27,8 @@ protected:
     char* brand = nullptr;
     unsigned year;
     unsigned maxSpeed;
+
+    virtual void swapData(const Vehicle& other);
 };
 
 

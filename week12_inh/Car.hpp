@@ -3,14 +3,14 @@
 class Car : public Vehicle
 {
 public:
-    Car() = delete;
+    Car();
     Car(const Car& other);
     Car(const char* brand, unsigned year, unsigned maxSpeed, const char* model, unsigned hp);
     ~Car();
     Car& operator=(const Car& other);
 
     //setters
-    char* setModel(const char* model);
+    void setModel(const char* model);
     void setHp(unsigned hp) { this->hp = hp; }
 
     //getters
@@ -22,7 +22,6 @@ public:
 
 private:
     void clear();
-
 private:
     char* model;
     unsigned hp;
